@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0E3B27" />
+<title>Lá Xanh — Trợ lý cây cảnh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #EFF3EC;
+    --surface: #FFFFFF;
+    --ink: #10281C;
+    --ink-2: #42564A;
+    --ink-3: #65776B;
+    --line: #D8E1D9;
+    --green: #1E7B4C;
+    --green-deep: #0E3B27;
+    --green-tint: #E2F0E6;
+    --sky: #1F6E9C;
+    --sky-tint: #E1EFF7;
+    --amber: #9A6407;
+    --amber-tint: #FAEFD6;
+    --coral: #B53E27;
+    --coral-tint: #FBE5DF;
+    --sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100vh;
+    background: var(--bg); color: var(--ink);
+    font: 400 15px/1.6 var(--sans);
+  }
+  [hidden] { display: none !important; }
+  h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid #2B9A63; outline-offset: 2px; }
+
+  svg.i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 32px) 56px; }
+
+  /* ---------- Top bar ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px 20px; flex-wrap: wrap; padding: 20px 0 22px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 600 25px/1 var(--serif); letter-spacing: -0.01em; color: var(--green-deep); background: none; border: 0; padding: 0; }
+  .brand-mark { width: 36px; height: 36px; border-radius: 11px; background: var(--green-deep); color: #fff; display: grid; place-items: center; }
+  .brand-mark .i { width: 20px; height: 20px; }
+  .nav { display: flex; gap: 4px; padding: 4px; background: rgba(14, 59, 39, 0.07); border-radius: 999px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav button { border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--ink-2); white-space: nowrap; display: flex; align-items: center; gap: 7px; transition: background .15s, color .15s; }
+  .nav button:hover { color: var(--ink); }
+  .nav button[aria-current="page"] { background: var(--green-deep); color: #fff; }
+
+  /* ---------- Buttons ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; border-radius: 999px; padding: 12px 22px; font-weight: 600; font-size: 15px; border: 1.5px solid transparent; transition: background .15s, border-color .15s, transform .1s; }
+  .btn:active { transform: scale(0.985); }
+  .btn-primary { background: var(--green-deep); color: #fff; }
+  .btn-primary:hover { background: #174D36; }
+  .btn-go { background: var(--green); color: #fff; width: 100%; padding: 15px 22px; font-size: 16px; }
+  .btn-go:hover:not(:disabled) { background: #186A41; }
+  .btn-go:disabled { background: #C9D5CB; color: #5F7165; cursor: not-allowed; }
+  .btn-ghost { background: transparent; border-color: #BFCDC2; color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--green); background: #fff; }
+  .btn-sm { padding: 8px 16px; font-size: 13.5px; }
+  .btn-wide { width: 100%; }
+
+  .sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: clamp(20px, 3.2vw, 32px); }
+  .h-serif { font: 500 clamp(24px, 3.4vw, 30px)/1.15 var(--serif); letter-spacing: -0.01em; color: var(--green-deep); }
+  .muted { color: var(--ink-2); }
+
+  /* ---------- Home ---------- */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(28px, 6vw, 72px); align-items: center; padding: clamp(4px, 2vw, 24px) 0 44px; }
+  .hero h1 { font: 500 clamp(38px, 6.2vw, 60px)/1.05 var(--serif); letter-spacing: -0.02em; color: var(--green-deep); max-width: 14ch; }
+  .hero .lead { margin-top: 20px; font-size: 17px; line-height: 1.65; color: var(--ink-2); max-width: 46ch; }
+  .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+
+  .vf { position: relative; width: 100%; max-width: 420px; margin-left: auto; aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden; background: #CFE3D4; isolation: isolate; }
+  .vf-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .vf-sweep { position: absolute; left: 0; right: 0; height: 90px; top: -90px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.55) 85%, rgba(255,255,255,.9)); border-bottom: 2px solid #fff; animation: sweep 1.9s .5s ease-in-out 1 both; z-index: 1; }
+  @keyframes sweep { from { top: -90px; } to { top: 100%; } }
+  .vf-chip { position: absolute; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 999px; background: rgba(255,255,255,.94); font-size: 13px; font-weight: 600; color: var(--green-deep); }
+  .vf-chip .ci { width: 26px; height: 26px; border-radius: 50%; background: var(--green-tint); color: var(--green); display: grid; place-items: center; }
+  .vf-chip .ci .i { width: 15px; height: 15px; }
+  .vf-chip.c1 { left: 6%; top: 17%; }
+  .vf-chip.c2 { right: 6%; top: 44%; }
+  .vf-chip.c3 { left: 8%; bottom: 14%; }
+  .vf-chip.c3 .ci { background: var(--sky-tint); color: var(--sky); }
+  .vf-chip.c2 .ci { background: var(--amber-tint); color: var(--amber); }
+
+  .steps { list-style: none; padding: 30px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .step { display: flex; gap: 14px; }
+  .step-n { width: 32px; height: 32px; border-radius: 50%; background: var(--green-deep); color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+  .step h3 { font-size: 16px; font-weight: 600; }
+  .step p { color: var(--ink-2); font-size: 14px; margin-top: 4px; }
+
+  /* ---------- Diagnose ---------- */
+  .locbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 7px 7px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; margin-bottom: 24px; }
+  .locbar-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .locbar .pin { color: var(--ink-3); }
+  .locbar[data-status="granted"] .pin { color: var(--green); }
+  .locbar[data-status="denied"] .pin { color: var(--amber); }
+  .locbar-text { min-width: 0; line-height: 1.25; }
+  .locbar-text small { display: block; font-size: 12px; color: var(--ink-3); }
+  #locLabel { font-size: 14px; font-weight: 500; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .stage { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(20px, 4vw, 40px); align-items: start; }
+  .stage[data-state="empty"] { grid-template-columns: minmax(0, 640px); justify-content: center; }
+  @media (min-width: 900px) { .photo-col { position: sticky; top: 20px; } }
+
+  .drop { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: clamp(36px, 7vw, 68px) 24px; border: 2px dashed #B1C4B5; border-radius: 28px; background: rgba(255,255,255,.55); transition: background .15s, border-color .15s; }
+  .drop.over { background: var(--green-tint); border-color: var(--green); }
+  .drop-ico { width: 64px; height: 64px; border-radius: 50%; background: var(--green-tint); color: var(--green); display: grid; place-items: center; margin-bottom: 10px; }
+  .drop-ico .i { width: 28px; height: 28px; }
+  .drop h2 { font: 500 clamp(24px, 4vw, 28px)/1.2 var(--serif); color: var(--green-deep); }
+  .drop p { color: var(--ink-2); max-width: 36ch; }
+  .drop .alt { font-size: 13px; color: var(--ink-3); margin-top: 14px; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 18px; }
+
+  .photo { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 4 / 5; background: #1B3A2A; isolation: isolate; }
+  .photo::before { content: ""; position: absolute; inset: -30px; background: var(--photo, none) center / cover; filter: blur(26px) saturate(1.1) brightness(.85); z-index: -1; }
+  .photo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  @media (max-width: 899px) { .photo { aspect-ratio: 1 / 1; max-height: 64vh; } }
+  .caption { margin-top: 12px; font-size: 13px; color: var(--ink-3); padding: 0 6px; }
+
+  .pv-top { position: absolute; left: 14px; top: 14px; z-index: 3; max-width: calc(100% - 28px); padding: 8px 14px; border-radius: 999px; background: rgba(8, 28, 18, .66); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pv-bottom { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; border-radius: 22px; background: rgba(255,255,255,.95); color: var(--ink); }
+  .pv-ico { width: 42px; height: 42px; border-radius: 50%; background: var(--tone); color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+  .pv-ico .i { width: 22px; height: 22px; }
+  .pv-text { min-width: 0; line-height: 1.25; flex: 1; }
+  .pv-text small { display: block; font-size: 12px; color: var(--ink-3); }
+  .pv-text strong { font-size: 16px; font-weight: 600; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pv-pct { font: 500 22px/1 var(--serif); color: var(--tone); font-variant-numeric: tabular-nums; }
+
+  /* Scan overlay while loading */
+  .scan { position: absolute; inset: 0; z-index: 2; pointer-events: none; display: none; }
+  .stage[data-state="loading"] .scan { display: block; }
+  .scan .c { position: absolute; width: 34px; height: 34px; border: 3px solid #fff; opacity: .95; }
+  .scan .tl { left: 16px; top: 16px; border-right: 0; border-bottom: 0; border-top-left-radius: 12px; }
+  .scan .tr { right: 16px; top: 16px; border-left: 0; border-bottom: 0; border-top-right-radius: 12px; }
+  .scan .bl { left: 16px; bottom: 16px; border-right: 0; border-top: 0; border-bottom-left-radius: 12px; }
+  .scan .br { right: 16px; bottom: 16px; border-left: 0; border-top: 0; border-bottom-right-radius: 12px; }
+  .scan-line { position: absolute; left: 0; right: 0; top: 0; height: 90px; background: linear-gradient(to bottom, rgba(155,240,192,0), rgba(155,240,192,.38)); border-bottom: 2px solid #9BF0C0; animation: scan 2.2s ease-in-out infinite alternate; }
+  @keyframes scan { from { top: 0; } to { top: calc(100% - 90px); } }
+
+  .info-col > .sheet + .sheet { margin-top: 16px; }
+  .tips { list-style: none; padding: 0; margin: 18px 0 24px; display: grid; gap: 12px; }
+  .tips li { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; color: var(--ink-2); }
+  .tips .t-ico { width: 32px; height: 32px; border-radius: 10px; background: var(--green-tint); color: var(--green); display: grid; place-items: center; flex-shrink: 0; }
+  .tips .t-ico .i { width: 17px; height: 17px; }
+  .hint { font-size: 13px; color: var(--amber); margin-top: 10px; text-align: center; }
+  .hint button { background: none; border: 0; padding: 0; color: inherit; font-weight: 600; text-decoration: underline; }
+  .sheet .btn-ghost.under { margin-top: 10px; width: 100%; }
+
+  /* Loading steps */
+  .load-steps { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 14px; }
+  .ls { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--ink-3); }
+  .ls-mark { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; flex-shrink: 0; color: #fff; }
+  .ls-mark .i { width: 14px; height: 14px; stroke-width: 2.6; }
+  .ls.active { color: var(--ink); font-weight: 600; }
+  .ls.active .ls-mark { border-color: var(--green); border-top-color: transparent; animation: spin .9s linear infinite; }
+  .ls.done { color: var(--ink-2); }
+  .ls.done .ls-mark { background: var(--green); border-color: var(--green); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Result ---------- */
+  .tone-ok   { --tone: #1E7B4C; --tone-tint: #E2F0E6; --tone-ink: #0E3B27; }
+  .tone-warn { --tone: #B77709; --tone-tint: #FAEFD6; --tone-ink: #5A3A02; }
+  .tone-bad  { --tone: #C0432B; --tone-tint: #FBE5DF; --tone-ink: #6B2111; }
+
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 500; background: var(--green-tint); color: var(--green-deep); }
+  .tag.flowering { background: #F6E4EF; color: #7A2D5C; }
+  .tag.fruiting { background: var(--amber-tint); color: #5A3A02; }
+
+  .r-species { font: 500 clamp(30px, 4.6vw, 42px)/1.08 var(--serif); letter-spacing: -0.015em; color: var(--green-deep); margin-top: 12px; }
+  .r-latin { font: italic 400 19px/1.3 var(--serif); color: var(--ink-3); margin-top: 4px; }
+
+  .meter { margin-top: 14px; }
+  .meter-head { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+  .meter-head strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .meter-bar { height: 8px; border-radius: 99px; background: rgba(16, 40, 28, .1); overflow: hidden; }
+  .meter-bar i { display: block; height: 100%; border-radius: 99px; background: var(--tone, var(--green)); transform-origin: left; transform: scaleX(var(--v)); animation: fill .8s cubic-bezier(.2, .7, .2, 1) both; }
+  .meter.m-species { --tone: var(--green); }
+  .meter.low .meter-bar i { background: #D9A441; }
+  .meter-flag { font-size: 12.5px; color: var(--amber); margin-top: 6px; }
+  @keyframes fill { from { transform: scaleX(0); } }
+
+  .verdict { margin-top: 24px; border-radius: 22px; padding: 18px; background: var(--tone-tint); color: var(--tone-ink); }
+  .verdict-top { display: flex; align-items: center; gap: 14px; }
+  .verdict-ico { width: 52px; height: 52px; border-radius: 50%; background: var(--tone); color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+  .verdict-ico .i { width: 26px; height: 26px; }
+  .verdict small { font-size: 13px; opacity: .85; display: block; }
+  .verdict h3 { font: 500 clamp(22px, 3.4vw, 26px)/1.2 var(--serif); }
+  .verdict .meter { --tone: var(--tone); }
+  .verdict .meter-head { color: var(--tone-ink); }
+  .verdict .meter-head strong { color: var(--tone-ink); }
+  .verdict .meter-bar { background: rgba(255, 255, 255, .65); }
+  .verdict .meter-flag { color: var(--tone-ink); font-weight: 500; }
+
+  .sec { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .sec > h3 { font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 16px; }
+
+  .care { list-style: none; padding: 0; margin: 0; display: grid; gap: 20px; }
+  .care li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
+  .care-ico { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; }
+  .care-ico.sky { background: var(--sky-tint); color: var(--sky); }
+  .care-ico.green { background: var(--green-tint); color: var(--green); }
+  .care-ico.amber { background: var(--amber-tint); color: var(--amber); }
+  .care h4 { font-size: 13px; font-weight: 500; color: var(--ink-3); line-height: 1.3; }
+  .care .main { font-weight: 600; font-size: 16px; line-height: 1.45; margin-top: 2px; }
+  .care .sub { color: var(--ink-2); font-size: 14px; line-height: 1.55; margin-top: 2px; }
+
+  .why p { font-size: 15px; line-height: 1.7; color: var(--ink); max-width: 62ch; }
+  .why .note { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--amber-tint); color: #5A3A02; font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
+  .why .note .i { margin-top: 2px; }
+
+  .w-strip { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+  .w-cell { padding: 14px 14px 16px; min-width: 0; }
+  .w-cell + .w-cell { border-left: 1px solid var(--line); }
+  .w-cell .i { color: var(--sky); width: 20px; height: 20px; }
+  .w-val { display: block; font: 500 clamp(22px, 3.4vw, 28px)/1.15 var(--serif); margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .w-val.text { font-size: 17px; line-height: 1.3; font-family: var(--sans); font-weight: 600; margin-top: 10px; }
+  .w-cell small { display: block; font-size: 12.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.35; }
+  .w-empty { font-size: 14px; color: var(--ink-3); }
+
+  .fine { font-size: 12.5px; color: var(--ink-3); line-height: 1.55; margin-top: 22px; }
+  .r-actions { margin-top: 20px; }
+
+  /* Fail panel */
+  .fail-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--amber-tint); color: var(--amber); display: grid; place-items: center; margin-bottom: 16px; }
+  .fail-ico .i { width: 28px; height: 28px; }
+  .fail-ico.err { background: var(--coral-tint); color: var(--coral); }
+  .fail-msg { margin-top: 10px; color: var(--ink-2); white-space: pre-line; }
+  .fail-conf { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .fail-conf span { font-size: 13px; padding: 5px 12px; border-radius: 999px; background: #F0F4F0; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .fail-actions { display: grid; gap: 10px; margin-top: 22px; }
+
+  /* ---------- Library ---------- */
+  .lib-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+  .lib-head p { margin-top: 6px; font-size: 14.5px; }
+  .search { position: relative; width: min(100%, 300px); }
+  .search .i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-3); width: 18px; height: 18px; }
+  .search input { width: 100%; font: inherit; font-size: 14.5px; padding: 11px 16px 11px 42px; border-radius: 999px; border: 1.5px solid #BFCDC2; background: #fff; color: var(--ink); }
+  .search input:focus { border-color: var(--green); outline: none; box-shadow: 0 0 0 3px rgba(43, 154, 99, .25); }
+  .lib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sp { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-height: 150px; }
+  .sp-ico { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--green-tint); color: var(--green); }
+  .sp-ico.flowering { background: #F6E4EF; color: #7A2D5C; }
+  .sp-ico.fruiting { background: var(--amber-tint); color: var(--amber); }
+  .sp h3 { font: 500 19px/1.25 var(--serif); color: var(--green-deep); }
+  .sp .latin { font: italic 400 15px/1.3 var(--serif); color: var(--ink-3); margin-top: 2px; }
+  .sp .tag { align-self: flex-start; margin-top: auto; }
+  .lib-state { color: var(--ink-2); padding: 20px 4px; }
+  .lib-state.err { color: var(--coral); }
+
+  /* ---------- Settings ---------- */
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .set-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .set-row:first-of-type { padding-top: 6px; }
+  .set-row strong { font-weight: 600; font-size: 15px; }
+  .set-row small { display: block; color: var(--ink-3); font-size: 13px; margin-top: 2px; word-break: break-all; }
+  .seg { display: flex; padding: 3px; border-radius: 999px; background: rgba(14, 59, 39, .08); flex-shrink: 0; }
+  .seg button { border: 0; background: transparent; padding: 7px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); }
+  .seg button[aria-pressed="true"] { background: var(--green-deep); color: #fff; }
+
+  /* ---------- Province modal ---------- */
+  .modal { position: fixed; inset: 0; z-index: 50; background: rgba(10, 28, 18, .55); display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+  .modal-panel { background: var(--surface); border-radius: 26px; width: 100%; max-width: 400px; max-height: 78vh; display: flex; flex-direction: column; overflow: hidden; }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 10px 24px; }
+  .modal-head h2 { font: 500 24px/1.2 var(--serif); color: var(--green-deep); }
+  .icon-btn { width: 38px; height: 38px; border-radius: 50%; border: 0; background: transparent; display: grid; place-items: center; color: var(--ink-2); }
+  .icon-btn:hover { background: #EEF2EE; }
+  .modal-body { overflow-y: auto; padding: 4px 12px 14px; }
+  .gps { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; margin-bottom: 6px; border-radius: 16px; border: 1.5px solid #BFCDC2; background: transparent; font-weight: 600; font-size: 14.5px; }
+  .gps:hover { border-color: var(--green); background: var(--green-tint); }
+  .gps .i { color: var(--green); }
+  .prov { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; border: 0; background: transparent; padding: 12px 14px; border-radius: 14px; font-size: 15px; }
+  .prov .i { color: var(--ink-3); }
+  .prov:hover { background: #F0F4F0; }
+  .prov[aria-selected="true"] { background: var(--green-tint); font-weight: 600; }
+  .prov[aria-selected="true"] .i { color: var(--green); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 899px) {
+    .stage { grid-template-columns: minmax(0, 1fr); }
+    .hero { grid-template-columns: minmax(0, 1fr); }
+    .vf { margin: 0 auto; max-width: 360px; }
+    .hero h1 { max-width: 16ch; }
+  }
+  @media (max-width: 760px) {
+    .steps { grid-template-columns: 1fr; gap: 20px; }
+    .lib-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .lib-grid { grid-template-columns: 1fr; }
+    .nav button { padding: 8px 12px; }
+    .w-cell { padding: 12px 10px 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+    .scan-line { animation: none; top: 40%; }
+    .vf-sweep { display: none; }
+  }
+
+  /* ---- Nâng cấp: Grad-CAM, top-3, nhật ký ---- */
+  .cam img { width: 100%; border-radius: 20px; display: block; }
+  .cam-note { font-size: 13px; color: var(--ink-3); margin-top: 8px; }
+  .top3 { list-style: none; padding: 0; margin: 6px 0 14px; display: grid; gap: 8px; }
+  .top3 li { display: grid; grid-template-columns: 1fr 90px 44px; gap: 10px; align-items: center; font-size: 13.5px; }
+  .top3 i { display: block; height: 6px; border-radius: 99px; background: linear-gradient(to right, var(--green) calc(var(--v) * 100%), rgba(16,40,28,.1) 0); }
+  .top3 b { text-align: right; font-variant-numeric: tabular-nums; }
+  .top3-h { font-size: 12.5px; color: var(--ink-3); margin-top: 8px; }
+  .unc-box { margin-top: 14px; padding: 12px 14px; border-radius: 16px; background: var(--amber-tint); color: #5A3A02; font-size: 14px; }
+  .save-box { display: grid; gap: 8px; margin: 0 0 12px; }
+  .save-box select, .save-box input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; font: inherit; background: var(--surface); color: var(--ink); }
+  .jcard { margin-bottom: 16px; max-width: 720px; }
+  .jcard header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .jtrend { margin-top: 10px; font-size: 14px; padding: 10px 14px; border-radius: 14px; background: var(--tone-tint); color: var(--tone-ink); }
+  .jthumbs { display: flex; gap: 8px; overflow-x: auto; margin-top: 12px; }
+  .jthumbs figure { flex: 0 0 auto; text-align: center; font-size: 11.5px; color: var(--ink-3); }
+  .jthumbs img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; display: block; }
+
+  .fb-box { margin: 0 0 12px; padding: 14px; border: 1px solid var(--line); border-radius: 18px; display: grid; gap: 10px; font-size: 14px; }
+  .fb-box .btn-row { display: flex; gap: 8px; }
+  .fb-box select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; font: inherit; background: var(--surface); color: var(--ink); }
+
+  .opt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 4px; }
+  .opt-row label { display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-3); }
+  .opt-row select { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; font: inherit; background: var(--surface); color: var(--ink); }
+  .adj { margin: 12px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-2); display: grid; gap: 4px; }
+  .sp-meta { font-size: 12.5px; color: var(--ink-3); margin-top: 6px; line-height: 1.5; }
+  .jsched { margin-top: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; font-size: 14px; display: grid; gap: 6px; }
+  .jsched .due { color: #8A2E12; font-weight: 600; }
+  .jsched .btn-row, .today .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .today { max-width: 720px; margin-bottom: 16px; padding: 14px 16px; border-radius: 18px; background: var(--amber-tint); color: #5A3A02; font-size: 14px; }
+  .today ul { margin: 6px 0 0; padding-left: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <button class="brand" onclick="showTop('home')" aria-label="Lá Xanh — về trang chủ">
+      <span class="brand-mark"><i data-ic="leaf"></i></span>
+      Lá Xanh
+    </button>
+    <nav class="nav" aria-label="Điều hướng chính">
+      <button id="nav-home" onclick="showTop('home')" aria-current="page"><i data-ic="home"></i>Trang chủ</button>
+      <button id="nav-diagnose" onclick="showTop('diagnose')"><i data-ic="camera"></i>Chẩn đoán</button>
+      <button id="nav-library" onclick="showTop('library')"><i data-ic="book"></i>Thư viện loài</button>
+      <button id="nav-journal" onclick="showTop('journal')"><i data-ic="sprout"></i>Nhật ký</button>
+      <button id="nav-settings" onclick="showTop('settings')"><i data-ic="settings"></i>Cài đặt</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== HOME ===== -->
+    <section id="top-home">
+      <div class="hero">
+        <div>
+          <h1>Cây của bạn đang cần gì hôm nay?</h1>
+          <p class="lead">Chụp một tấm ảnh lá. Lá Xanh nhận ra loài cây, đoán tình trạng sức khỏe và gợi ý khi nào nên tưới, bón phân — có tính đến thời tiết nơi bạn ở.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="showTop('diagnose')"><i data-ic="camera"></i>Chụp ảnh cây</button>
+            <button class="btn btn-ghost" onclick="showTop('library')">Xem các loài hỗ trợ</button>
+          </div>
+        </div>
+
+        <div class="vf" aria-hidden="true">
+          <svg class="vf-art" viewBox="0 0 420 525" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="vfbg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#DDEBDE"/>
+                <stop offset="1" stop-color="#B5D3BD"/>
+              </linearGradient>
+              <g id="leaf">
+                <path d="M0 0C-70 -30 -86 -120 -30 -182Q0 -214 30 -182C86 -120 70 -30 0 0Z"/>
+                <path d="M0 -4V-176M0 -50L-34 -86M0 -50L34 -86M0 -92L-30 -124M0 -92L30 -124" fill="none" stroke="#0E3B27" stroke-opacity=".28" stroke-width="3" stroke-linecap="round"/>
+              </g>
+            </defs>
+            <rect width="420" height="525" fill="url(#vfbg)"/>
+            <circle cx="326" cy="108" r="66" fill="#F5F9EF" opacity=".7"/>
+            <g fill="none" stroke="#2A6B47" stroke-width="6" stroke-linecap="round">
+              <path d="M210 392C210 340 208 300 210 272"/>
+              <path d="M206 392C190 350 165 325 150 300"/>
+              <path d="M214 392C236 350 255 325 270 300"/>
+            </g>
+            <use href="#leaf" transform="translate(210 272) scale(1.2)" fill="#49A874"/>
+            <use href="#leaf" transform="translate(150 300) rotate(-32) scale(.95)" fill="#2E8A58"/>
+            <use href="#leaf" transform="translate(270 300) rotate(30) scale(1.05)" fill="#1F7A4D"/>
+            <ellipse cx="210" cy="494" rx="84" ry="8" fill="#0E3B27" opacity=".14"/>
+            <path d="M152 384h116l-13 100a10 10 0 0 1-10 8h-70a10 10 0 0 1-10-8z" fill="#EDE6D8"/>
+            <rect x="142" y="372" width="136" height="22" rx="8" fill="#F6F1E6"/>
+            <g fill="none" stroke="#0E3B27" stroke-opacity=".7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M30 78V32a2 2 0 0 1 2-2h46"/>
+              <path d="M390 78V32a2 2 0 0 0-2-2h-46"/>
+              <path d="M30 447v46a2 2 0 0 0 2 2h46"/>
+              <path d="M390 447v46a2 2 0 0 1-2 2h-46"/>
+            </g>
+          </svg>
+          <div class="vf-sweep"></div>
+          <span class="vf-chip c1"><span class="ci"><i data-ic="leaf"></i></span>Nhận diện loài</span>
+          <span class="vf-chip c2"><span class="ci"><i data-ic="search"></i></span>Kiểm tra tình trạng lá</span>
+          <span class="vf-chip c3"><span class="ci"><i data-ic="droplet"></i></span>Gợi ý lịch tưới</span>
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li class="step"><span class="step-n">1</span><div><h3>Chụp ảnh</h3><p>Chụp rõ phần lá hoặc cả cây, đủ sáng.</p></div></li>
+        <li class="step"><span class="step-n">2</span><div><h3>AI phân tích</h3><p>Hai mô hình CNN nhận ra loài cây và tình trạng sức khỏe.</p></div></li>
+        <li class="step"><span class="step-n">3</span><div><h3>Nhận gợi ý</h3><p>Lịch tưới và bón phân, điều chỉnh theo nhiệt độ, độ ẩm và dự báo mưa.</p></div></li>
+      </ol>
+    </section>
+
+    <!-- ===== DIAGNOSE ===== -->
+    <section id="top-diagnose" hidden>
+      <div class="locbar" id="locbar" data-status="pending">
+        <div class="locbar-main">
+          <i data-ic="pin" data-cls="pin"></i>
+          <div class="locbar-text">
+            <small>Vị trí dùng để lấy thời tiết</small>
+            <span id="locLabel">Chưa xác định vị trí</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="openProvincePicker()">Đổi vị trí</button>
+      </div>
+
+      <div class="stage" id="stage" data-state="empty">
+        <div class="photo-col">
+          <div id="dropzone" class="drop">
+            <div class="drop-ico"><i data-ic="camera"></i></div>
+            <h2>Thêm ảnh cây của bạn</h2>
+            <p>Chụp rõ phần lá hoặc toàn thân cây, dưới ánh sáng tự nhiên.</p>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="document.getElementById('cameraInput').click()"><i data-ic="camera"></i>Chụp ảnh</button>
+              <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()"><i data-ic="image"></i>Tải ảnh lên</button>
+            </div>
+            <p class="alt">Hoặc kéo thả ảnh vào đây</p>
+            <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden onchange="handleFile(event)">
+            <input id="fileInput" type="file" accept="image/*" hidden onchange="handleFile(event)">
+          </div>
+
+          <figure id="photoFigure" class="photo" hidden>
+            <img id="preview" alt="Ảnh cây bạn vừa chọn" />
+            <div class="scan" aria-hidden="true">
+              <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+              <span class="scan-line"></span>
+            </div>
+            <div id="pvSpecies" class="pv-top" hidden></div>
+            <div id="pvVerdict" class="pv-bottom" hidden></div>
+          </figure>
+          <p id="photoCaption" class="caption" hidden></p>
+        </div>
+
+        <div class="info-col" id="infoCol" hidden>
+          <!-- Ảnh đã chọn, chưa phân tích -->
+          <section id="panel-ready" class="sheet" hidden>
+            <h2 class="h-serif">Ảnh đã sẵn sàng</h2>
+            <p class="muted" style="margin-top:8px;">Xem lại ảnh bên cạnh. Ảnh càng rõ lá, kết quả càng đáng tin.</p>
+            <ul class="tips">
+              <li><span class="t-ico"><i data-ic="search"></i></span>Chụp gần phần lá, không bị nhòe.</li>
+              <li><span class="t-ico"><i data-ic="sun"></i></span>Dùng ánh sáng tự nhiên, tránh ngược sáng.</li>
+              <li><span class="t-ico"><i data-ic="leaf"></i></span>Chỉ để một cây trong khung hình.</li>
+            </ul>
+            <div class="opt-row">
+               <label>Vị trí đặt cây<select id="optPlace" onchange="setPref('place', this.value)"><option value="indoor">Trong nhà</option><option value="outdoor">Ngoài trời / ban công</option></select></label>
+               <label>Kích thước chậu<select id="optPot" onchange="setPref('pot', this.value)"><option value="small">Nhỏ (~12 cm)</option><option value="medium">Vừa (~18 cm)</option><option value="large">Lớn (~25 cm)</option></select></label>
+             </div>
+             <button id="analyzeBtn" class="btn btn-go" onclick="runAnalysis()" disabled>Phân tích cây này</button>
+            <p id="analyzeHint" class="hint" hidden>Cần có vị trí để lấy thời tiết. <button onclick="openProvincePicker()">Chọn vị trí</button></p>
+            <button class="btn btn-ghost under" onclick="resetToMain()">Chọn ảnh khác</button>
+          </section>
+
+          <!-- Đang phân tích -->
+          <section id="panel-loading" class="sheet" aria-live="polite" hidden>
+            <h2 class="h-serif">Đang phân tích ảnh</h2>
+            <p class="muted" style="margin-top:8px;">Việc này thường mất vài giây.</p>
+            <ol class="load-steps" id="loadSteps"></ol>
+          </section>
+
+          <!-- Kết quả -->
+          <div id="panel-result" aria-live="polite" hidden></div>
+
+          <!-- Không nhận diện được / lỗi -->
+          <section id="panel-fail" class="sheet" hidden></section>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== LIBRARY ===== -->
+    <section id="top-library" hidden>
+      <div class="lib-head">
+        <div>
+          <h2 class="h-serif">Thư viện loài cây</h2>
+          <p class="muted" id="libCount">Các loài Lá Xanh nhận diện được.</p>
+        </div>
+        <label class="search">
+          <i data-ic="search"></i>
+          <input id="libSearch" type="search" placeholder="Tìm theo tên hoặc tên khoa học" aria-label="Tìm loài cây" oninput="renderLibrary()" />
+        </label>
+      </div>
+      <div id="libraryBody"><p class="lib-state">Đang tải danh sách loài…</p></div>
+    </section>
+
+    <!-- ===== JOURNAL ===== -->
+    <section id="top-journal" hidden>
+      <div class="lib-head"><div>
+        <h2 class="h-serif">Nhật ký cây</h2>
+        <p class="muted">Theo dõi sức khỏe từng cây theo thời gian. Dữ liệu chỉ lưu trên trình duyệt này.</p>
+      </div></div>
+      <div id="journalBody"></div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section id="top-settings" hidden>
+      <div class="sheet" style="max-width:640px;">
+        <h2 class="h-serif" style="margin-bottom:12px;">Cài đặt</h2>
+        <div class="set-row">
+          <div>
+            <strong>Vị trí</strong>
+            <small id="settingsLocLabel">Chưa xác định</small>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showTop('diagnose'); openProvincePicker();">Đổi</button>
+        </div>
+        <div class="set-row">
+          <div>
+            <strong>Đơn vị lượng nước</strong>
+            <small>Áp dụng cho màn kết quả</small>
+          </div>
+          <div class="seg" role="group" aria-label="Đơn vị lượng nước">
+            <button id="unit-ml" aria-pressed="true" onclick="setUnit('ml')">ml</button>
+            <button id="unit-l" aria-pressed="false" onclick="setUnit('l')">lít</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <div>
+            <strong>Địa chỉ máy chủ</strong>
+            <small id="settingsApiBase"></small>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== Province modal ===== -->
+<div id="provinceModal" class="modal" hidden onclick="if(event.target===this) closeProvincePicker()">
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="provTitle">
+    <div class="modal-head">
+      <h2 id="provTitle">Chọn vị trí</h2>
+      <button class="icon-btn" onclick="closeProvincePicker()" aria-label="Đóng"><i data-ic="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <button class="gps" id="gpsBtn" onclick="requestGeolocation()"><i data-ic="locate"></i>Dùng vị trí hiện tại (GPS)</button>
+      <div id="provinceList" role="listbox" aria-label="Tỉnh thành"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = window.location.origin;
+const API_URL = API_BASE + "/analyze";
+
+let waterUnit = "ml";
+let librarySpecies = null;
+let coords = null;
+let selectedProvinceName = null;
+let selectedFile = null;
+let photoUrl = null;
+let lastResult = null;
+let geoRequested = false;
+let loadingTimer = null;
+let lastFocus = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const CAT_LABEL = { leaf: "Cây lá", flowering: "Cây hoa", fruiting: "Cây quả mini" };
+
+const PROVINCES = [
+  { name: "Hà Nội", lat: 21.0285, lon: 105.8542 },
+  { name: "TP. Hồ Chí Minh", lat: 10.8231, lon: 106.6297 },
+  { name: "Đà Nẵng", lat: 16.0544, lon: 108.2022 },
+  { name: "Hải Phòng", lat: 20.8449, lon: 106.6881 },
+  { name: "Cần Thơ", lat: 10.0452, lon: 105.7469 },
+  { name: "Huế", lat: 16.4637, lon: 107.5909 },
+  { name: "Nha Trang", lat: 12.2388, lon: 109.1967 },
+  { name: "Đà Lạt", lat: 11.9404, lon: 108.4583 },
+  { name: "Vũng Tàu", lat: 10.3460, lon: 107.0843 },
+  { name: "Buôn Ma Thuột", lat: 12.6667, lon: 108.0500 },
+];
+
+/* ---------- Icons (stroke, 24px grid) ---------- */
+const ICONS = {
+  leaf: '<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+  book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+  settings: '<path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  locate: '<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  droplet: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  droplet_off: '<path d="M18.715 13.186C18.29 11.858 17.384 10.607 16 9.5c-2-1.6-3.5-4-4-6.5a10.7 10.7 0 0 1-.884 2.586"/><path d="m2 2 20 20"/><path d="M8.795 8.797A11 11 0 0 1 8 9.5C6 11.1 5 13 5 15a7 7 0 0 0 13.222 3.208"/>',
+  droplets: '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  spots: '<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="9.5" r="1.4"/><circle cx="14.5" cy="8.5" r="1.1"/><circle cx="11.5" cy="14.5" r="1.6"/><circle cx="16" cy="14" r="1"/>',
+  flask: '<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/>',
+  sprout: '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+  check_circle: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  thermo: '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
+  cloud: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+  rain: '<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6M8 14v6M12 16v6"/>',
+};
+function ic(name, cls = "") {
+  return `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+function hydrateIcons() {
+  document.querySelectorAll("[data-ic]").forEach((el) => {
+    el.outerHTML = ic(el.dataset.ic, el.dataset.cls || "");
+  });
+}
+
+/* ---------- Navigation ---------- */
+function showTop(name) {
+  ["home", "diagnose", "library", "journal", "settings"].forEach((s) => {
+    $("top-" + s).hidden = s !== name;
+    const btn = $("nav-" + s);
+    if (s === name) btn.setAttribute("aria-current", "page");
+    else btn.removeAttribute("aria-current");
+  });
+  if (name === "diagnose" && !geoRequested) {
+    geoRequested = true;
+    requestGeolocation();
+  }
+  if (name === "library" && !librarySpecies) loadLibrary();
+  if (name === "journal") refreshJournal().then(renderJournal);
+  if (name === "settings") $("settingsLocLabel").textContent = $("locLabel").textContent;
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+/* ---------- Location ---------- */
+function buildProvinceList() {
+  $("provinceList").innerHTML = PROVINCES.map(
+    (p, i) => `<button class="prov" role="option" data-i="${i}" aria-selected="false">${ic("pin")}<span>${esc(p.name)}</span></button>`
+  ).join("");
+  $("provinceList").querySelectorAll(".prov").forEach((b) => {
+    b.addEventListener("click", () => selectProvince(PROVINCES[Number(b.dataset.i)]));
+  });
+}
+function refreshProvinceSelection() {
+  $("provinceList").querySelectorAll(".prov").forEach((b) => {
+    b.setAttribute("aria-selected", PROVINCES[Number(b.dataset.i)].name === selectedProvinceName ? "true" : "false");
+  });
+}
+function updateLocationUI(status, text) {
+  $("locbar").dataset.status = status;
+  $("locLabel").textContent = text;
+  $("settingsLocLabel").textContent = text;
+}
+function requestGeolocation() {
+  updateLocationUI("pending", "Đang xin quyền truy cập vị trí…");
+  if (!navigator.geolocation) {
+    updateLocationUI("denied", "Trình duyệt không hỗ trợ định vị — hãy chọn tỉnh/thành");
+    openProvincePicker();
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      selectedProvinceName = null;
+      updateLocationUI("granted", `Vị trí hiện tại (${coords.lat.toFixed(2)}, ${coords.lon.toFixed(2)})`);
+      updateAnalyzeButton();
+      closeProvincePicker();
+    },
+    () => {
+      updateLocationUI("denied", "Chưa có vị trí — hãy chọn tỉnh/thành");
+      openProvincePicker();
+    },
+    { timeout: 6000 }
+  );
+}
+function selectProvince(p) {
+  coords = { lat: p.lat, lon: p.lon };
+  selectedProvinceName = p.name;
+  updateLocationUI("granted", p.name);
+  updateAnalyzeButton();
+  closeProvincePicker();
+}
+function openProvincePicker() {
+  lastFocus = document.activeElement;
+  refreshProvinceSelection();
+  $("provinceModal").hidden = false;
+  $("gpsBtn").focus();
+}
+function closeProvincePicker() {
+  if ($("provinceModal").hidden) return;
+  $("provinceModal").hidden = true;
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeProvincePicker(); });
+
+/* ---------- Library ---------- */
+async function loadLibrary() {
+  const body = $("libraryBody");
+  try {
+    const resp = await fetch(API_BASE + "/species");
+    if (!resp.ok) throw new Error("Không lấy được danh sách loài");
+    librarySpecies = Object.entries(await resp.json());
+    renderLibrary();
+  } catch (err) {
+    body.innerHTML = `<p class="lib-state err">Không kết nối được máy chủ (${esc(API_BASE)}/species). Kiểm tra uvicorn có đang chạy không.</p>`;
+  }
+}
+function renderLibrary() {
+  if (!librarySpecies) return;
+  const q = $("libSearch").value.trim().toLowerCase();
+  const items = librarySpecies.filter(([k, i]) =>
+    ((i.display_name || k) + " " + (i.species_latin || "")).toLowerCase().includes(q)
+  );
+  $("libCount").textContent = q
+    ? `${items.length} / ${librarySpecies.length} loài khớp tìm kiếm`
+    : `${librarySpecies.length} loài Lá Xanh nhận diện được.`;
+  if (librarySpecies.length === 0) {
+    $("libraryBody").innerHTML = `<p class="lib-state">Chưa có loài nào trong dữ liệu.</p>`;
+    return;
+  }
+  if (items.length === 0) {
+    $("libraryBody").innerHTML = `<p class="lib-state">Không có loài nào khớp “${esc(q)}”.</p>`;
+    return;
+  }
+  $("libraryBody").innerHTML = `<div class="lib-grid">` + items.map(([k, i]) => {
+    const cat = i.category || "leaf";
+    return `
+      <article class="sp">
+        <div class="sp-ico ${esc(cat)}">${ic("leaf")}</div>
+        <div>
+          <h3>${esc(i.display_name || k)}</h3>
+          ${i.species_latin ? `<p class="latin">${esc(i.species_latin)}</p>` : ""}
+          ${i.care ? `<p class="sp-meta">Tưới khoảng ${i.care.water_interval_days[0]}-${i.care.water_interval_days[1]} ngày/lần · ${esc(i.care.light)}<br>${esc(i.care.pets.note)}</p>` : ""}
+        </div>
+        <span class="tag ${esc(cat)}">${esc(CAT_LABEL[cat] || cat)}</span>
+      </article>`;
+  }).join("") + `</div>`;
+}
+
+/* ---------- Settings ---------- */
+function setUnit(u) {
+  waterUnit = u;
+  $("unit-ml").setAttribute("aria-pressed", u === "ml");
+  $("unit-l").setAttribute("aria-pressed", u === "l");
+  if (lastResult && lastResult.is_plant) renderResult(lastResult, { quiet: true });
+}
+
+/* ---------- Stage / image ---------- */
+function setStage(state) {
+  $("stage").dataset.state = state;
+  const has = state !== "empty";
+  $("dropzone").hidden = has;
+  $("photoFigure").hidden = !has;
+  $("infoCol").hidden = !has;
+  $("panel-ready").hidden = state !== "ready";
+  $("panel-loading").hidden = state !== "loading";
+  $("panel-result").hidden = state !== "result";
+  $("panel-fail").hidden = state !== "fail";
+  if (state !== "result") {
+    $("pvSpecies").hidden = true;
+    $("pvVerdict").hidden = true;
+    $("photoCaption").hidden = true;
+  }
+}
+
+function handleFile(e) {
+  const file = e.target.files && e.target.files[0];
+  if (file) setFile(file);
+}
+function setFile(file) {
+  if (!file.type.startsWith("image/")) {
+    renderFail({ title: "Tệp này không phải ảnh", message: "Hãy chọn một tệp ảnh (JPG, PNG, WEBP…) rồi thử lại.", kind: "error", keepPhoto: false });
+    return;
+  }
+  if (photoUrl) URL.revokeObjectURL(photoUrl);
+  selectedFile = file;
+  lastResult = null;
+  photoUrl = URL.createObjectURL(file);
+  $("preview").src = photoUrl;
+  $("photoFigure").style.setProperty("--photo", `url("${photoUrl}")`);
+  setStage("ready");
+  updateAnalyzeButton();
+}
+function updateAnalyzeButton() {
+  const ok = !!(selectedFile && coords);
+  $("analyzeBtn").disabled = !ok;
+  $("analyzeHint").hidden = ok || !selectedFile;
+}
+function resetToMain() {
+  stopLoading();
+  selectedFile = null;
+  lastResult = null;
+  if (photoUrl) URL.revokeObjectURL(photoUrl);
+  photoUrl = null;
+  $("preview").removeAttribute("src");
+  $("cameraInput").value = "";
+  $("fileInput").value = "";
+  setStage("empty");
+  showTop("diagnose");
+}
+
+// Kéo thả ảnh
+(function setupDrop() {
+  const dz = document.getElementById("dropzone");
+  ["dragenter", "dragover"].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((ev) => dz.addEventListener(ev, (e) => { e.preventDefault(); dz.classList.remove("over"); }));
+  dz.addEventListener("drop", (e) => {
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) setFile(f);
+  });
+})();
+
+/* ---------- Loading steps ---------- */
+const STEPS = ["Nhận diện loài cây", "Đánh giá tình trạng lá", "Kiểm tra thời tiết tại vị trí của bạn", "Soạn gợi ý chăm sóc"];
+function paintSteps(active) {
+  $("loadSteps").innerHTML = STEPS.map((s, i) => {
+    const st = i < active ? "done" : i === active ? "active" : "todo";
+    return `<li class="ls ${st}"><span class="ls-mark">${st === "done" ? ic("check") : ""}</span>${s}</li>`;
+  }).join("");
+}
+function startLoading() {
+  let i = 0;
+  paintSteps(i);
+  stopLoading();
+  loadingTimer = setInterval(() => { if (i < STEPS.length - 1) paintSteps(++i); }, 1300);
+}
+function stopLoading() {
+  if (loadingTimer) clearInterval(loadingTimer);
+  loadingTimer = null;
+}
+
+/* ---------- Call backend ---------- */
+async function runAnalysis() {
+  if (!selectedFile || !coords) return;
+  setStage("loading");
+  startLoading();
+  scrollToStage();
+
+  const formData = new FormData();
+  formData.append("image", selectedFile);
+  formData.append("lat", coords.lat);
+  formData.append("lon", coords.lon);
+  formData.append("placement", getPrefs().place);
+  formData.append("pot", getPrefs().pot);
+
+  try {
+    const resp = await fetch(API_URL, { method: "POST", body: formData });
+    if (!resp.ok) {
+      const errBody = await resp.json().catch(() => ({}));
+      const d = errBody.detail;
+      throw new Error((typeof d === "string" ? d : d ? JSON.stringify(d) : "") || `Lỗi máy chủ (mã ${resp.status})`);
+    }
+    const data = await resp.json();
+    stopLoading();
+    renderResult(data);
+  } catch (err) {
+    stopLoading();
+    renderFail({
+      title: "Không phân tích được ảnh",
+      message: "Hãy kiểm tra backend và model có đang chạy không, rồi thử lại.\n\nChi tiết: " + err.message,
+      kind: "error",
+    });
+  }
+}
+function scrollToStage() {
+  if (window.matchMedia("(max-width: 899px)").matches) {
+    $("stage").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+  }
+}
+
+/* ---------- Render ---------- */
+const COND = {
+  healthy:             { tone: "ok",   icon: "leaf" },
+  dehydration_wilting: { tone: "warn", icon: "droplet_off" },
+  nutrient_deficiency: { tone: "warn", icon: "flask" },
+  sunburn:             { tone: "warn", icon: "sun" },
+  leaf_spot_fungal:    { tone: "bad",  icon: "spots" },
+  overwatering_rot:    { tone: "bad",  icon: "droplets" },
+};
+
+function pctNum(v) {
+  const n = Number(v);
+  return v == null || Number.isNaN(n) ? null : Math.max(0, Math.min(1, n));
+}
+function pctText(v) {
+  const n = pctNum(v);
+  return n == null ? "—" : Math.round(n * 100) + "%";
+}
+function meter(label, v, extraClass = "") {
+  const n = pctNum(v);
+  if (n == null) return "";
+  const low = n < 0.5;
+  return `
+    <div class="meter ${extraClass} ${low ? "low" : ""}">
+      <div class="meter-head"><span>${esc(label)}</span><strong>${pctText(n)}</strong></div>
+      <div class="meter-bar"><i style="--v:${n.toFixed(3)}"></i></div>
+      ${low ? `<div class="meter-flag">Độ tin cậy thấp — hãy chụp lại ảnh rõ hơn để kiểm chứng.</div>` : ""}
+    </div>`;
+}
+function formatAmount(ml) {
+  if (ml == null) return null;
+  if (waterUnit === "l") return (ml / 1000).toFixed(2).replace(/\.?0+$/, "") + " lít";
+  return ml + " ml";
+}
+function waterDetail(ml) {
+  if (ml === 0) return "Không tưới thêm cho đến khi đất khô phù hợp.";
+  if (ml == null) return "Lượng nước tùy độ ẩm đất — sờ đất trước khi tưới.";
+  return "Lượng nước gợi ý: " + formatAmount(ml);
+}
+function cap(s) {
+  s = String(s || "");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function stamp() {
+  return new Date().toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" });
+}
+
+function renderResult(data, opts = {}) {
+  lastResult = data;
+  if (!data.is_plant) {
+    renderFail({
+      title: "Chưa nhận diện được cây",
+      message: data.message || "Ảnh này chưa đủ tin cậy để nhận diện.",
+      kind: "unsure",
+      conf: [
+        ["Loài", data.species_confidence],
+        ["Tình trạng", data.condition_confidence],
+      ],
+    });
+    return;
+  }
+
+  const rec = data.recommendation || {};
+  const fert = data.fertilizer_recommendation || null;
+  const weather = data.weather;
+  const meta = COND[data.condition] || { tone: data.health_status === "healthy" ? "ok" : "warn", icon: data.health_status === "healthy" ? "leaf" : "alert" };
+  const conditionText = data.condition_name_vi || data.disease_name_vi || data.condition || "Chưa xác định";
+  const cat = data.category || "leaf";
+  const species = data.species || "Không xác định";
+
+  // Ảnh: nhãn loài + kết luận tình trạng nằm ngay trên ảnh
+  $("pvSpecies").textContent = species;
+  $("pvSpecies").hidden = false;
+  $("pvVerdict").className = "pv-bottom tone-" + meta.tone;
+  $("pvVerdict").innerHTML = `
+    <span class="pv-ico">${ic(meta.icon)}</span>
+    <span class="pv-text"><small>Tình trạng</small><strong>${esc(conditionText)}</strong></span>
+    <span class="pv-pct">${pctText(data.condition_confidence)}</span>`;
+  $("pvVerdict").hidden = false;
+  $("photoCaption").textContent = `Ảnh bạn vừa gửi · ${stamp()} · ${$("locLabel").textContent}`;
+  $("photoCaption").hidden = false;
+
+  const weatherHtml = weather
+    ? `<div class="w-strip">
+         <div class="w-cell">${ic("thermo")}<span class="w-val">${esc(weather.temp)}°C</span><small>Nhiệt độ</small></div>
+         <div class="w-cell">${ic("droplet")}<span class="w-val">${esc(weather.humidity)}%</span><small>Độ ẩm không khí</small></div>
+         <div class="w-cell">${ic(weather.rain_next_hours ? "rain" : "cloud")}<span class="w-val text">${esc(cap(weather.condition))}</span><small>${weather.rain_next_hours ? "Có thể mưa trong vài giờ tới" : "Chưa thấy mưa trong vài giờ tới"}</small></div>
+       </div>`
+    : `<p class="w-empty">Không lấy được dữ liệu thời tiết. Gợi ý bên trên dựa trên ảnh và tình trạng cây.</p>`;
+
+  const html = `
+    <article class="sheet tone-${meta.tone}">
+      <header>
+        <span class="tag ${esc(cat)}">${esc(CAT_LABEL[cat] || cat)}</span>
+        <h2 class="r-species">${esc(species)}</h2>
+        ${data.species_latin ? `<p class="r-latin">${esc(data.species_latin)}</p>` : ""}
+        ${meter("Độ chắc chắn về loài", data.species_confidence, "m-species")}
+      </header>
+
+      <section class="verdict">
+        <div class="verdict-top">
+          <span class="verdict-ico">${ic(meta.icon)}</span>
+          <div><small>Tình trạng cây</small><h3>${esc(conditionText)}</h3></div>
+        </div>
+        ${meter("Độ chắc chắn về tình trạng", data.condition_confidence)}
+      </section>
+
+      <section class="sec">
+        <h3>Chăm sóc hôm nay</h3>
+        <ul class="care">
+          <li>
+            <span class="care-ico sky">${ic("droplet")}</span>
+            <div><h4>Tưới nước</h4><p class="main">${esc(rec.time || "—")}</p><p class="sub">${esc(waterDetail(rec.amount_ml))}</p></div>
+          </li>
+          <li>
+            <span class="care-ico green">${ic("check_circle")}</span>
+            <div><h4>Cách chăm</h4><p class="main">${esc(rec.method || "—")}</p></div>
+          </li>
+          ${fert ? `
+          <li>
+            <span class="care-ico amber">${ic("sprout")}</span>
+            <div><h4>Phân bón</h4><p class="main">${esc(fert.type || "—")}</p><p class="sub">${esc(fert.frequency || "")}</p></div>
+          </li>` : ""}
+        </ul>
+      </section>
+
+      ${extraSections(data)}
+
+      <section class="sec why">
+        <h3>Vì sao gợi ý như vậy</h3>
+        <p>${esc(rec.reason || "")}</p>
+        ${data.notes ? `<div class="note">${ic("alert")}<span>${esc(data.notes)}</span></div>` : ""}
+      </section>
+
+      <section class="sec">
+        <h3>Thời tiết tại vị trí của bạn</h3>
+        ${weatherHtml}
+      </section>
+
+      <p class="fine">${esc((fert && fert.note) || "Khuyến nghị mang tính tham khảo.")} Kết quả do hai mô hình CNN ước lượng từ ảnh, không thay thế ý kiến chuyên gia.</p>
+
+      <div class="r-actions">
+        ${feedbackBox()}
+        ${saveBox()}
+        <button class="btn btn-primary btn-wide" onclick="resetToMain()">${ic("camera")}Chẩn đoán ảnh khác</button>
+      </div>
+    </article>`;
+
+  $("panel-result").innerHTML = html;
+  setStage("result");
+  if (!opts.quiet) scrollToStage();
+}
+
+function renderFail({ title, message, kind = "unsure", conf = [], keepPhoto = true }) {
+  const isErr = kind === "error";
+  const confHtml = conf
+    .filter(([, v]) => pctNum(v) != null)
+    .map(([l, v]) => `<span>${esc(l)}: ${pctText(v)}</span>`)
+    .join("");
+  $("panel-fail").innerHTML = `
+    <div class="fail-ico ${isErr ? "err" : ""}">${ic(isErr ? "alert" : "search")}</div>
+    <h2 class="h-serif">${esc(title)}</h2>
+    <p class="fail-msg">${esc(message)}</p>
+    ${confHtml ? `<div class="fail-conf">${confHtml}</div>` : ""}
+    ${isErr ? "" : `
+    <ul class="tips" style="margin-bottom:0;">
+      <li><span class="t-ico">${ic("search")}</span>Chụp gần phần lá, giữ máy thật vững.</li>
+      <li><span class="t-ico">${ic("sun")}</span>Dùng ánh sáng tự nhiên, tránh ngược sáng.</li>
+      <li><span class="t-ico">${ic("leaf")}</span>Kiểm tra cây của bạn có thuộc các loài được hỗ trợ không.</li>
+    </ul>`}
+    <div class="fail-actions">
+      ${selectedFile && isErr ? `<button class="btn btn-go" onclick="runAnalysis()">${ic("refresh")}Thử lại với ảnh này</button>` : ""}
+      <button class="btn ${isErr && selectedFile ? "btn-ghost" : "btn-go"}" onclick="resetToMain()">Chọn ảnh khác</button>
+      ${isErr ? "" : `<button class="btn btn-ghost" onclick="showTop('library')">Xem các loài hỗ trợ</button>`}
+    </div>`;
+  if (!selectedFile || !keepPhoto) {
+    // Không có ảnh để giữ lại: về màn chọn ảnh nhưng vẫn hiện thông báo
+    setStage("empty");
+    $("dropzone").querySelector("p").textContent = message.split("\n")[0];
+    return;
+  }
+  setStage("fail");
+  scrollToStage();
+}
+
+/* ---------- Nâng cấp: giải thích kết quả ---------- */
+function extraSections(d) {
+  let h = careSections(d);
+  if (d.uncertain) {
+    h += `<div class="unc-box">${ic("alert")} Chưa đủ chắc chắn về tình trạng cây. Hãy chụp lại gần hơn, đủ sáng, rồi so sánh trước khi làm theo gợi ý.</div>`;
+  }
+  if (d.gradcam) {
+    h += `<section class="sec"><h3>Mô hình đang nhìn vào đâu?</h3>
+      <div class="cam"><img src="${d.gradcam}" alt="Bản đồ vùng mô hình chú ý"></div>
+      <p class="cam-note">Vùng đỏ/vàng là nơi mô hình dựa vào nhiều nhất để kết luận. Đây là gợi ý trực quan, không phải ranh giới chính xác của vết bệnh.</p></section>`;
+  }
+  const row = (t) => `<li><span>${esc(t.name_vi)}</span><i style="--v:${Number(t.prob).toFixed(3)}"></i><b>${pctText(t.prob)}</b></li>`;
+  if ((d.top_condition || []).length) {
+    h += `<section class="sec"><h3>Các khả năng gần nhất</h3>
+      <p class="top3-h">Tình trạng</p><ul class="top3">${d.top_condition.map(row).join("")}</ul>
+      <p class="top3-h">Loài</p><ul class="top3">${(d.top_species || []).map(row).join("")}</ul></section>`;
+  }
+  return h;
+}
+
+/* ---------- Nâng cấp: nhật ký theo dõi (localStorage) ---------- */
+let JCACHE = [];
+const CLIENT_KEY = "laxanh_client_id";
+function clientId() {
+  let id = null;
+  try { id = localStorage.getItem(CLIENT_KEY); } catch {}
+  if (!id) {
+    id = (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2)).replace(/[^A-Za-z0-9_-]/g, "");
+    try { localStorage.setItem(CLIENT_KEY, id); } catch {}
+  }
+  return id;
+}
+async function api(path, opts = {}) {
+  const r = await fetch(API_BASE + path, { ...opts, headers: { "Content-Type": "application/json", "X-Client-Id": clientId(), ...(opts.headers || {}) } });
+  if (!r.ok) throw new Error("Mã " + r.status);
+  return r.json();
+}
+function jload() { return JCACHE; }
+async function refreshJournal() {
+  try { JCACHE = (await api("/api/plants")).plants; } catch (e) { console.warn("Không tải được nhật ký:", e.message); }
+  return JCACHE;
+}
+async function migrateLocalJournal() {
+  let old = null;
+  try { old = JSON.parse(localStorage.getItem("laxanh_journal_v1")); } catch {}
+  if (!Array.isArray(old) || !old.length) return;
+  try {
+    await api("/api/import", { method: "POST", body: JSON.stringify({ plants: old }) });
+    localStorage.removeItem("laxanh_journal_v1");
+  } catch (e) { console.warn("Chưa chuyển được nhật ký cũ:", e.message); }
+}
+function makeThumb() {
+  return new Promise((res) => {
+    const i = new Image();
+    i.onload = () => {
+      const s = 160 / Math.max(i.width, i.height), c = document.createElement("canvas");
+      c.width = Math.round(i.width * s); c.height = Math.round(i.height * s);
+      c.getContext("2d").drawImage(i, 0, 0, c.width, c.height);
+      res(c.toDataURL("image/jpeg", 0.7));
+    };
+    i.onerror = () => res(null);
+    i.src = photoUrl;
+  });
+}
+function saveBox() {
+  const d = jload(), m = d.find((p) => p.species === (lastResult || {}).species_key);
+  const opts = d.map((p) => `<option value="${p.id}" ${m && m.id === p.id ? "selected" : ""}>${esc(p.name)}</option>`).join("");
+  return `<div class="save-box">
+    <select id="saveTarget" aria-label="Lưu vào cây nào" onchange="$('saveName').hidden = this.value !== 'new'">
+      <option value="new">+ Cây mới</option>${opts}</select>
+    <input id="saveName" placeholder="Đặt tên cây (vd. Monstera ban công)" maxlength="40" ${m ? "hidden" : ""}>
+    <button id="saveBtn" class="btn btn-go" onclick="saveToJournal()">Lưu vào nhật ký</button>
+    <small id="saveMsg" class="muted"></small></div>`;
+}
+async function saveToJournal() {
+  if (!lastResult || !lastResult.is_plant) return;
+  const id = $("saveTarget").value;
+  const body = {
+    plant_id: id === "new" ? null : id,
+    name: $("saveName").value.trim() || lastResult.species,
+    species_key: lastResult.species_key || "",
+    species_vi: lastResult.species || "",
+    plan: lastResult.care ? lastResult.care.plan : null,
+    entry: {
+      t: Date.now(), cond: lastResult.condition, condVi: lastResult.condition_name_vi,
+      hp: (lastResult.condition_probs || {}).healthy ?? null, unc: !!lastResult.uncertain, thumb: await makeThumb(),
+    },
+  };
+  try {
+    const r = await api("/api/entries", { method: "POST", body: JSON.stringify(body) });
+    await refreshJournal();
+    $("saveMsg").textContent = `Đã lưu vào nhật ký “${r.name}”. Xem ở mục Nhật ký.`;
+    $("saveBtn").disabled = true;
+  } catch (e) {
+    $("saveMsg").textContent = "Chưa lưu được vào nhật ký: " + e.message;
+  }
+}
+function trendNote(es) {
+  const n = es.length;
+  if (n < 2) return { tone: "ok", text: "Chụp thêm ít nhất 1 lần nữa để xem xu hướng." };
+  const l3 = es.slice(-3);
+  if (l3.length === 3 && l3.every((e) => e.cond === l3[0].cond && e.cond !== "healthy" && !e.unc)) {
+    return { tone: "bad", text: `3 lần gần nhất đều nghiêng về “${l3[0].condVi}”. Tình trạng này đang kéo dài, nên xử lý nguyên nhân thay vì chờ thêm.` };
+  }
+  const a = es[n - 1].hp, b = es[n - 2].hp;
+  if (a != null && b != null) {
+    if (a - b <= -0.2) return { tone: "warn", text: "Sức khỏe giảm rõ so với lần chụp trước. Kiểm tra đất, ánh sáng và chụp lại sau 2-3 ngày." };
+    if (a - b >= 0.2) return { tone: "ok", text: "Cây đang khá hơn so với lần chụp trước. Tiếp tục cách chăm hiện tại." };
+  }
+  return { tone: "ok", text: "Tình trạng khá ổn định giữa các lần chụp." };
+}
+function trendSvg(es) {
+  const pts = es.filter((e) => e.hp != null);
+  if (pts.length < 2) return `<p class="muted" style="margin-top:12px">Biểu đồ xuất hiện sau 2 lần chụp.</p>`;
+  const W = 300, H = 110, px = 14, py = 12;
+  const X = (i) => px + ((W - 2 * px) * i) / (pts.length - 1), Y = (v) => py + (H - 2 * py) * (1 - v);
+  const col = (e) => ({ ok: "#1E7B4C", warn: "#B77709", bad: "#C0432B" }[(COND[e.cond] || {}).tone] || "#B77709");
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Xu hướng sức khỏe theo thời gian" style="width:100%;margin-top:12px">
+    <line x1="${px}" x2="${W - px}" y1="${Y(0.5)}" y2="${Y(0.5)}" stroke="#10281C" stroke-opacity=".15" stroke-dasharray="3 3"/>
+    <polyline fill="none" stroke="#1E7B4C" stroke-width="2" points="${pts.map((e, i) => X(i) + "," + Y(e.hp)).join(" ")}"/>
+    ${pts.map((e, i) => `<circle cx="${X(i)}" cy="${Y(e.hp)}" r="4" fill="${col(e)}"/>`).join("")}</svg>
+    <small class="muted">Điểm càng cao càng gần “khỏe mạnh” theo ước lượng của mô hình.</small>`;
+}
+function renderJournal() {
+  const d = jload(), b = $("journalBody");
+  if (!d.length) {
+    b.innerHTML = `<div class="sheet" style="max-width:720px"><p class="muted">Chưa có cây nào trong nhật ký. Hãy chẩn đoán một ảnh rồi chọn “Lưu vào nhật ký”.</p></div>`;
+    return;
+  }
+  b.innerHTML = todayHtml(d) + d.map((p) => {
+    const es = p.entries, tn = trendNote(es);
+    return `<article class="sheet jcard">
+      <header><div><h3>${esc(p.name)}</h3><small class="muted">${esc(p.speciesVi || "")} · ${es.length} lần chụp</small></div>
+        <button class="btn btn-ghost btn-sm" onclick="deletePlant('${p.id}')">Xóa</button></header>
+      ${trendSvg(es)}
+      <div class="jtrend tone-${tn.tone}">${esc(tn.text)}</div>
+      ${schedHtml(p)}
+      <div class="jthumbs">${es.slice(-8).map((e) => `<figure>${e.thumb ? `<img src="${e.thumb}" alt="">` : ""}<figcaption>${new Date(e.t).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}</figcaption></figure>`).join("")}</div>
+    </article>`;
+  }).join("");
+}
+async function deletePlant(id) {
+  if (!confirm("Xóa cây này khỏi nhật ký?")) return;
+  try { await api("/api/plants/" + encodeURIComponent(id), { method: "DELETE" }); await refreshJournal(); }
+  catch (e) { alert("Không xóa được: " + e.message); }
+  renderJournal();
+}
+
+/* ---------- Nâng cấp: phản hồi đúng/sai để thu dữ liệu train ---------- */
+const FB_COND = { healthy: "Khỏe mạnh", dehydration_wilting: "Thiếu nước / Héo", leaf_spot_fungal: "Đốm lá do nấm", nutrient_deficiency: "Thiếu dinh dưỡng", overwatering_rot: "Tưới quá nhiều / Úng", sunburn: "Cháy nắng" };
+const FB_SPECIES = { aeonium: "Sen đá Aeonium", aloe_vera: "Nha đam", calathea_lancifolia: "Đuôi công lá dài", calathea_orbifolia: "Đuôi công lá tròn", dracaena_marginata: "Phất dụ mảnh", epiphyllum_anguliger: "Xương rồng xương cá", monstera_deliciosa: "Trầu bà lá xẻ", parlor_palm: "Cau tiểu trâm", sansevieria: "Lưỡi hổ" };
+function feedbackBox() {
+  const opt = (m, sel) => Object.entries(m).map(([k, v]) => `<option value="${k}" ${k === sel ? "selected" : ""}>${esc(v)}</option>`).join("");
+  return `<div class="fb-box">
+    <strong>Kết quả này đúng không?</strong>
+    <div class="btn-row" id="fbBtns">
+      <button class="btn btn-ghost btn-sm" onclick="sendFeedback('correct')">Đúng</button>
+      <button class="btn btn-ghost btn-sm" onclick="$('fbWrong').hidden = false">Chưa đúng</button>
+    </div>
+    <div id="fbWrong" hidden style="display:grid;gap:8px">
+      <label>Loài đúng<select id="fbSpecies">${opt(FB_SPECIES, lastResult.species_key)}</select></label>
+      <label>Tình trạng đúng<select id="fbCond">${opt(FB_COND, lastResult.condition)}</select></label>
+      <button class="btn btn-go btn-sm" onclick="sendFeedback('wrong')">Gửi sửa</button>
+    </div>
+    <small id="fbMsg" class="muted">Ảnh và nhãn bạn gửi sẽ được lưu để cải thiện mô hình sau khi được duyệt.</small></div>`;
+}
+async function sendFeedback(verdict) {
+  if (!selectedFile || !lastResult) return;
+  const fd = new FormData();
+  fd.append("image", selectedFile);
+  fd.append("verdict", verdict);
+  fd.append("predicted_species", lastResult.species_key || "");
+  fd.append("predicted_condition", lastResult.condition || "");
+  if (verdict === "wrong") {
+    fd.append("correct_species", $("fbSpecies").value);
+    fd.append("correct_condition", $("fbCond").value);
+  }
+  try {
+    const r = await fetch(API_BASE + "/feedback", { method: "POST", body: fd });
+    if (!r.ok) throw new Error("Mã " + r.status);
+    $("fbBtns").hidden = true;
+    $("fbWrong").hidden = true;
+    $("fbMsg").textContent = "Cảm ơn bạn! Phản hồi đã được ghi nhận.";
+  } catch (e) {
+    $("fbMsg").textContent = "Chưa gửi được phản hồi: " + e.message;
+  }
+}
+
+/* ---------- Nâng cấp: hồ sơ chăm sóc theo loài + lịch ---------- */
+const PREF_KEY = "laxanh_prefs_v1";
+function getPrefs() {
+  const d = { place: "indoor", pot: "medium" };
+  try { return Object.assign(d, JSON.parse(localStorage.getItem(PREF_KEY)) || {}); } catch { return d; }
+}
+function setPref(k, v) {
+  const p = getPrefs(); p[k] = v;
+  try { localStorage.setItem(PREF_KEY, JSON.stringify(p)); } catch {}
+}
+function initPrefs() { const p = getPrefs(); $("optPlace").value = p.place; $("optPot").value = p.pot; }
+
+function careSections(d) {
+  const c = d.care;
+  if (!c || !c.profile) return "";
+  const p = c.profile, pl = c.plan;
+  const li = (ico, cls, title, main, sub) => `<li><span class="care-ico ${cls}">${ic(ico)}</span><div><h4>${esc(title)}</h4><p class="main">${esc(main)}</p>${sub ? `<p class="sub">${esc(sub)}</p>` : ""}</div></li>`;
+  const petCls = p.pets.level === "safe" ? "green" : "amber";
+  return `<section class="sec"><h3>Hồ sơ chăm sóc ${esc(d.species)}</h3>
+    <ul class="care">
+      ${li("sun", "amber", "Ánh sáng", p.light)}
+      ${li("droplet", "sky", "Độ ẩm và nhiệt độ", p.humidity_text, p.temp_text)}
+      ${li("leaf", "green", "Giá thể", p.soil)}
+      ${li("alert", petCls, "Thú cưng", p.pets.note)}
+    </ul>
+    ${(p.tips || []).length ? `<ul class="adj">${p.tips.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</section>
+  <section class="sec"><h3>Lịch gợi ý (${esc(c.placement_label)}, ${esc(c.pot_label)})</h3>
+    <ul class="care">
+      ${li("droplet", "sky", "Chu kỳ tưới", `Khoảng ${pl.interval_days} ngày/lần`, pl.dry_rule)}
+      ${pl.hold_days ? li("alert", "amber", "Tạm ngừng tưới", `Ít nhất ${pl.hold_days} ngày, đến khi đất khô hẳn`) : ""}
+      ${pl.fert_interval_days && !pl.fert_hold ? li("sprout", "green", "Bón phân", `Khoảng ${Math.round(pl.fert_interval_days / 7)} tuần/lần`, pl.fert_note) : ""}
+    </ul>
+    ${pl.notes.length ? `<ul class="adj">${pl.notes.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+    <p class="cam-note">Lịch tự điều chỉnh theo loài, thời tiết và tình trạng cây. Lưu vào nhật ký để theo dõi ngày tưới kế tiếp.</p></section>`;
+}
+
+const DAY = 864e5;
+const fmtD = (t) => new Date(t).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+function schedule(p) {
+  const pl = p.plan;
+  if (!pl) return null;
+  const now = Date.now(), le = p.entries[p.entries.length - 1];
+  const lw = (p.watered || []).slice(-1)[0], lf = (p.fed || []).slice(-1)[0];
+  const s = { water: null, fert: null, alerts: [], due: false };
+  let nextW = lw ? lw + pl.interval_days * DAY : null;
+  if (pl.hold_days && le) nextW = Math.max(nextW || 0, le.t + pl.hold_days * DAY);
+  if (pl.water_now && le && (!lw || lw < le.t)) {
+    s.alerts.push("Lần chụp gần nhất cho thấy cây thiếu nước: kiểm tra đất và tưới nếu đất đã khô.");
+    s.due = true;
+  }
+  if (nextW) {
+    const d = Math.ceil((nextW - now) / DAY);
+    s.water = d <= 0
+      ? { due: true, text: d === 0 ? "Hôm nay đến lịch kiểm tra đất / tưới" : `Quá lịch tưới ${-d} ngày: hãy kiểm tra đất` }
+      : { due: false, text: `Tưới kế tiếp: ${fmtD(nextW)} (còn ${d} ngày)` };
+    if (d <= 0) s.due = true;
+  } else {
+    s.water = { due: false, text: "Bấm “Đã tưới hôm nay” để bắt đầu lịch tưới." };
+  }
+  if (pl.fert_interval_days && !pl.fert_hold) {
+    if (lf) {
+      const d = Math.ceil((lf + pl.fert_interval_days * DAY - now) / DAY);
+      s.fert = d <= 0 ? { due: true, text: "Đến kỳ bón phân (pha loãng)" } : { due: false, text: `Bón phân kế tiếp: ${fmtD(lf + pl.fert_interval_days * DAY)} (còn ${d} ngày)` };
+      if (d <= 0) s.due = true;
+    } else {
+      s.fert = { due: false, text: "Chưa ghi lần bón phân." };
+    }
+  }
+  return s;
+}
+function schedHtml(p) {
+  const s = schedule(p);
+  if (!s) return `<p class="muted" style="margin-top:10px">Lưu thêm một lần chẩn đoán mới để có lịch chăm cho cây này.</p>`;
+  return `<div class="jsched">
+    <p class="${s.water.due ? "due" : ""}">${esc(s.water.text)}</p>
+    ${s.fert ? `<p class="${s.fert.due ? "due" : ""}">${esc(s.fert.text)}</p>` : ""}
+    ${s.alerts.map((a) => `<p class="due">${esc(a)}</p>`).join("")}
+    <div class="btn-row">
+      <button class="btn btn-ghost btn-sm" onclick="markDone('${p.id}','watered')">Đã tưới hôm nay</button>
+      ${s.fert ? `<button class="btn btn-ghost btn-sm" onclick="markDone('${p.id}','fed')">Đã bón hôm nay</button>` : ""}
+    </div></div>`;
+}
+function todayHtml(d) {
+  const due = d.filter((p) => { const s = schedule(p); return s && s.due; });
+  if (!due.length) return "";
+  return `<div class="today"><strong>Việc cần xem hôm nay</strong><ul>${due.map((p) => `<li>${esc(p.name)}</li>`).join("")}</ul></div>`;
+}
+async function markDone(id, kind) {
+  try {
+    await api(`/api/plants/${encodeURIComponent(id)}/events`, { method: "POST", body: JSON.stringify({ kind }) });
+    await refreshJournal();
+  } catch (e) { alert("Không ghi được: " + e.message); }
+  renderJournal();
+}
+
+/* ---------- Init ---------- */
+initPrefs();
+migrateLocalJournal().then(refreshJournal);
+document.addEventListener("DOMContentLoaded", () => {
+  hydrateIcons();
+  $("settingsApiBase").textContent = API_URL;
+  buildProvinceList();
+  setStage("empty");
+});
+</script>
+</body>
+</html>

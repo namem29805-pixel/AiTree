@@ -1,0 +1,47 @@
+{
+  "aeonium": {
+    "display_name": "Aeonium",
+    "species_latin": "Aeonium spp.",
+    "category": "leaf"
+  },
+  "aloe_vera": {
+    "display_name": "Nha đam / Aloe Vera",
+    "species_latin": "Aloe vera",
+    "category": "leaf"
+  },
+  "calathea_lancifolia": {
+    "display_name": "Calathea Lancifolia",
+    "species_latin": "Goeppertia insignis",
+    "category": "leaf"
+  },
+  "calathea_orbifolia": {
+    "display_name": "Calathea Orbifolia",
+    "species_latin": "Goeppertia orbifolia",
+    "category": "leaf"
+  },
+  "dracaena_marginata": {
+    "display_name": "Dracaena Marginata",
+    "species_latin": "Dracaena reflexa var. angustifolia",
+    "category": "leaf"
+  },
+  "epiphyllum_anguliger": {
+    "display_name": "Epiphyllum Anguliger",
+    "species_latin": "Disocactus anguliger",
+    "category": "leaf"
+  },
+  "monstera_deliciosa": {
+    "display_name": "Monstera Deliciosa",
+    "species_latin": "Monstera deliciosa",
+    "category": "leaf"
+  },
+  "parlor_palm": {
+    "display_name": "Cau tiểu trâm / Parlor Palm",
+    "species_latin": "Chamaedorea elegans",
+    "category": "leaf"
+  },
+  "sansevieria": {
+    "display_name": "Lưỡi hổ / Sansevieria",
+    "species_latin": "Dracaena trifasciata",
+    "category": "leaf"
+  }
+}
