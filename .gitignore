@@ -1,0 +1,13 @@
+# Python cache and local environment
+__pycache__/
+*.py[cod]
+venv/
+
+# Local configuration
+.env
+**/.env
+
+# Local application data and user-submitted images
+data/*.db*
+feedback/images/*
+feedback_export/
